@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks 2026</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #1a237e;
+        }
+        header p {
+            margin: 5px 0 0;
+            color: #555;
+            font-size: 1.1em;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #search-input {
+            padding: 12px;
+            width: 50%;
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        #search-input:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+        .schedule {
+            margin-top: 20px;
+        }
+        .schedule-item {
+            display: flex;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+        .schedule-item:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .schedule-item.break .time-slot {
+             background-color: #e8eaf6;
+        }
+        .time-slot {
+            background-color: #f1f3f5;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: #1a237e;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #e0e0e0;
+        }
+        .time-slot span {
+            font-size: 1.2em;
+        }
+        .details {
+            padding: 20px;
+            width: 100%;
+        }
+        .details h2 {
+            margin: 0 0 10px;
+            font-size: 1.5em;
+        }
+        .details .speakers {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .details .description {
+            margin-bottom: 15px;
+        }
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .category-tag {
+            background-color: #3f51b5;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+        #no-results {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Tech Talks 2026</h1>
+            <p>A One-Day Virtual Conference for Innovators</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by category (e.g., AI, Cloud)...">
+        </div>
+
+        <div id="schedule-container" class="schedule">
+            <!-- Schedule items will be inserted here by JavaScript -->
+        </div>
+        <div id="no-results" style="display: none;">No talks match your search.</div>
+    </div>
+
+    <script>
+        const talks = [
+            {
+                title: "The Future of Artificial Intelligence",
+                speakers: ["Dr. Evelyn Reed"],
+                categories: ["AI", "Machine Learning"],
+                description: "A deep dive into the next generation of AI, exploring neural networks, and the ethical implications of sentient machines.",
+                duration: 60
+            },
+            {
+                title: "Modern Web Development with Serverless Architectures",
+                speakers: ["Johnathan Chen", "Maria Garcia"],
+                categories: ["Web Dev", "Cloud", "Serverless"],
+                description: "Learn how to build scalable, cost-effective web applications without managing servers. We'll cover key platforms and best practices.",
+                duration: 60
+            },
+            {
+                title: "Cybersecurity in a Quantum World",
+                speakers: ["Alistair Finch"],
+                categories: ["Security", "Quantum Computing"],
+                description: "Quantum computers pose a new threat to current encryption standards. This talk explores the future of cybersecurity in the quantum age.",
+                duration: 60
+            },
+            {
+                title: "Big Data & Analytics: From Theory to Practice",
+                speakers: ["Isabelle Vance", "Kenji Tanaka"],
+                categories: ["Data Science", "Analytics"],
+                description: "An exploration of how to effectively collect, process, and derive insights from massive datasets using modern tools and techniques.",
+                duration: 60
+            },
+            {
+                title: "The Rise of Sustainable Tech",
+                speakers: ["Fatima Al-Jamil"],
+                categories: ["Green Tech", "Sustainability", "Hardware"],
+                description: "Discover how the tech industry is innovating to reduce its environmental impact, from green data centers to circular economy principles.",
+                duration: 60
+            },
+            {
+                title: "UI/UX Design for a Multi-Device World",
+                speakers: ["David Lee", "Chloe Bennet"],
+                categories: ["Design", "UI/UX"],
+                description: "Best practices for creating seamless and intuitive user experiences across a wide range of devices, from desktops to wearables.",
+                duration: 60
+            }
+        ];
+
+        const scheduleContainer = document.getElementById('schedule-container');
+        const searchInput = document.getElementById('search-input');
+        const noResultsMessage = document.getElementById('no-results');
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function generateSchedule(filteredTalks) {
+            scheduleContainer.innerHTML = '';
+            let currentTime = new Date();
+            currentTime.setHours(10, 0, 0, 0); // Event starts at 10:00 AM
+
+            const scheduleLayout = [
+                { type: 'talk' },
+                { type: 'break', duration: 10 },
+                { type: 'talk' },
+                { type: 'break', duration: 10 },
+                { type: 'talk' },
+                { type: 'lunch', duration: 60 },
+                { type: 'talk' },
+                { type: 'break', duration: 10 },
+                { type: 'talk' },
+                { type: 'break', duration: 10 },
+                { type: 'talk' }
+            ];
+
+            let talkIndex = 0;
+            let visibleTalksCount = 0;
+
+            scheduleLayout.forEach(item => {
+                const startTime = new Date(currentTime);
+                let endTime;
+                let scheduleItemDiv;
+
+                if (item.type === 'talk') {
+                    const currentTalk = talks[talkIndex++];
+                    if (filteredTalks.includes(currentTalk)) {
+                        endTime = new Date(startTime.getTime() + currentTalk.duration * 60000);
+                        scheduleItemDiv = document.createElement('div');
+                        scheduleItemDiv.className = 'schedule-item';
+                        scheduleItemDiv.innerHTML = `
+                            <div class="time-slot">
+                                <span>${formatTime(startTime)}</span>
+                                <span style="margin: 5px 0;">-</span>
+                                <span>${formatTime(endTime)}</span>
+                            </div>
+                            <div class="details">
+                                <h2>${currentTalk.title}</h2>
+                                <div class="speakers">By: ${currentTalk.speakers.join(', ')}</div>
+                                <div class="description">${currentTalk.description}</div>
+                                <div class="categories">
+                                    ${currentTalk.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                        scheduleContainer.appendChild(scheduleItemDiv);
+                        visibleTalksCount++;
+                    }
+                    currentTime.setTime(startTime.getTime() + currentTalk.duration * 60000);
+
+                } else { // break or lunch
+                    endTime = new Date(startTime.getTime() + item.duration * 60000);
+                    scheduleItemDiv = document.createElement('div');
+                    scheduleItemDiv.className = 'schedule-item break';
+                    scheduleItemDiv.innerHTML = `
+                        <div class="time-slot">
+                            <span>${formatTime(startTime)}</span>
+                            <span style="margin: 5px 0;">-</span>
+                            <span>${formatTime(endTime)}</span>
+                        </div>
+                        <div class="details">
+                            <h2>${item.type === 'lunch' ? 'Lunch Break' : 'Transition Break'}</h2>
+                        </div>
+                    `;
+                    scheduleContainer.appendChild(scheduleItemDiv);
+                     currentTime.setTime(endTime.getTime());
+                }
+            });
+            
+             if(visibleTalksCount == 0){
+                noResultsMessage.style.display = 'block';
+             }
+             else{
+                noResultsMessage.style.display = 'none';
+             }
+        }
+
+        function filterTalks() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            if (!searchTerm) {
+                generateSchedule(talks);
+                return;
+            }
+
+            const filtered = talks.filter(talk =>
+                talk.categories.some(cat => cat.toLowerCase().includes(searchTerm))
+            );
+            generateSchedule(filtered);
+        }
+
+        // Initial render
+        generateSchedule(talks);
+
+        // Event listener for search
+        searchInput.addEventListener('input', filterTalks);
+
+    </script>
+</body>
+</html>
